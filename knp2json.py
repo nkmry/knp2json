@@ -10,12 +10,18 @@ def analyze_knp(knp_tab_output):
     # phrase = {type, relation, relationType, basics, morphemes, features}
     # basic = {type, relation, relationType, phrase, features [, case, caseAnalysis]}
     # morpheme = {type, phrase, morpheme, features}
+    results = []
     lines = knp_tab_output.split('\n')
-    phrases = []
-    basics = []
-    morphemes = []
     for l in lines:
-        if len(l) < 1 or l[0] in "#E":
+        if len(l) < 1:
+            continue
+        if l[0] == "#":
+            phrases = []
+            basics = []
+            morphemes = []
+            continue
+        if l == "EOS":
+            results.append({"phrases": phrases, "basics": basics, "morphemes": morphemes})
             continue
         d = {}
         f = re.split('>?<?', l)
@@ -36,7 +42,7 @@ def analyze_knp(knp_tab_output):
             d.update(analyze_morpheme(f[:-1]))
             morphemes.append(d)
             phrases[-1]['morphemes'].append(len(morphemes)-1)
-    return {"phrases": phrases, "basics": basics, "morphemes": morphemes}
+    return results
 
 
 def analyze_basic(basic_info):
