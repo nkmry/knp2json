@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import unittest
+import sys
 import os
-import importlib.machinery as machinery
-loader = machinery.SourceFileLoader('knp2json', os.path.dirname(os.path.abspath(__file__)) + '/../knp2json.py')
-k2j = loader.load_module()
+import os.path as path
+pardir_path = path.dirname(__file__) + path.sep + os.pardir
+sys.path.append(pardir_path)
+import knp2json.knp2json as k2j
 
 
 class Knp2jsonTest(unittest.TestCase):
 
     def setUp(self):
         file = open('test1_knp.txt')
-        self.knp_info = k2j.analyze_knp(file.read())
+        self.knp_info = k2j.execute(file.read())
         file.close()
 
     def test_analyze_knp(self):
@@ -29,7 +31,7 @@ class Knp2jsonTest(unittest.TestCase):
         self.assertEqual(self.knp_info[0]["phrases"][-1]["relationType"], "D")
         # k2j.show_analyzed_knp_info(self.knp_info[0])
         file = open('test2_knp.txt')
-        self.knp_info = k2j.analyze_knp(file.read())
+        self.knp_info = k2j.execute(file.read())
         self.assertEqual(len(self.knp_info), 6)
 
 

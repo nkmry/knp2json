@@ -6,7 +6,7 @@ import re
 import json
 
 
-def analyze_knp(knp_tab_output):
+def execute(knp_tab_output):
     # phrase = {type, relation, relationType, basics, morphemes, features}
     # basic = {type, relation, relationType, phrase, features [, case, caseAnalysis]}
     # morpheme = {type, phrase, morpheme, features}
@@ -132,5 +132,5 @@ def _convert_dictionary_to_string(dictionary, keys):
 
 
 if __name__ == "__main__":
-    syntactic_info = analyze_knp(sys.stdin.read())
+    syntactic_info = execute(sys.stdin.read())
     print(json.dumps(syntactic_info, indent=2, ensure_ascii=False))
