@@ -34,18 +34,18 @@ def analyze_knp(knp_tab_output):
             phrases.append(d)
         elif l[0] == '+':
             d['phrase'] = len(phrases) - 1
-            d.update(analyze_basic(f[:-1]))
+            d.update(_analyze_basic(f[:-1]))
             basics.append(d)
             phrases[-1]['basics'].append(len(basics)-1)
         else:
             d['phrase'] = len(phrases) - 1
-            d.update(analyze_morpheme(f[:-1]))
+            d.update(_analyze_morpheme(f[:-1]))
             morphemes.append(d)
             phrases[-1]['morphemes'].append(len(morphemes)-1)
     return results
 
 
-def analyze_basic(basic_info):
+def _analyze_basic(basic_info):
     d = {'relation': int(basic_info[0][2:-2]), 'relationType': basic_info[0][-2]}
     basic_info = basic_info[1:]
     removed = []
@@ -56,41 +56,41 @@ def analyze_basic(basic_info):
             if splited[0] == "解析格":
                 d['case'] = splited[1]
             if splited[0] == "格解析結果":
-                d['caseAnalysis'] = analyze_case_analysis(splited[-1])
+                d['caseAnalysis'] = _analyze_case_analysis(splited[-1])
     for f in removed:
         basic_info.remove(f)
     d['features'] = basic_info
     return d
 
 
-def analyze_case_analysis(case_analysis_string):
+def _analyze_case_analysis(case_analysis_string):
     elements = case_analysis_string.split(';')
     d = {}
     for element in elements:
         splited = element.split('/')
         e = {'flag': splited[1],
              'expression': splited[2],
-             '#basics': changeInt(splited[3]),
-             'sentenceId': changeInt(splited[5])}
+             '#basics': _change_int(splited[3]),
+             'sentenceId': _change_int(splited[5])}
         d[splited[0]] = e
     return d
 
 
-def changeInt(intString):
-    if intString.isdigit():
-        return int(intString)
+def _change_int(int_string):
+    if int_string.isdigit():
+        return int(int_string)
     else:
-        return intString
+        return int_string
 
 
-def analyze_morpheme(morheme_info):
-    s = morheme_info[0].split(' ')
+def _analyze_morpheme(morpheme_info):
+    s = morpheme_info[0].split(' ')
     d = {'input': s[0], 'pronunciation': s[1], 'original': s[2], 'pos': s[3], 'posId': s[4], 'subPos': s[5],
          'subPosId': s[6], 'inflectionType': s[7], 'inflectionTypeId': s[8], 'inflection': s[9], 'inflectionId': s[10],
          'others': s[11]}
-    morheme_info = morheme_info[1:]
+    morpheme_info = morpheme_info[1:]
     removed = []
-    for f in morheme_info:
+    for f in morpheme_info:
         splited = f.split(':')
         if len(splited) > 1:
             removed.append(f)
@@ -99,8 +99,8 @@ def analyze_morpheme(morheme_info):
             else:
                 d[splited[0]] = splited[1:]
     for f in removed:
-        morheme_info.remove(f)
-    d['features'] = morheme_info
+        morpheme_info.remove(f)
+    d['features'] = morpheme_info
     return d
 
 
@@ -111,18 +111,18 @@ def show_analyzed_knp_info(analyzed_knp_info):
     print("### 文節 ###")
     attr = ['relation', 'relationType', 'basics', 'morphemes', 'features', 'type']
     for i in range(len(phrases)):
-        print(str(i) + ': ' + convert_dictionary_to_string(phrases[i], attr))
+        print(str(i) + ': ' + _convert_dictionary_to_string(phrases[i], attr))
     print("### 形態素 ###")
     attr = ['phrase', 'input', 'pos', 'subPos', 'wikipedia', 'features', 'type']
     for i in range(len(morphemes)):
-        print(str(i) + ': ' + convert_dictionary_to_string(morphemes[i], attr))
+        print(str(i) + ': ' + _convert_dictionary_to_string(morphemes[i], attr))
     print("### 基本句 ###")
     attr = ['relation', 'relationType', 'phrase', 'case', 'caseAnalysis', 'features', 'type']
     for i in range(len(basics)):
-        print(str(i) + ': ' + convert_dictionary_to_string(basics[i], attr))
+        print(str(i) + ': ' + _convert_dictionary_to_string(basics[i], attr))
 
 
-def convert_dictionary_to_string(dictionary, keys):
+def _convert_dictionary_to_string(dictionary, keys):
     s = '{'
     for k in keys:
         if k in dictionary.keys():
